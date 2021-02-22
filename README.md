@@ -1,6 +1,7 @@
 # Inclusify
 
-Inclusify aims to encourage people to be more cognizant of their language and be more motivated to use unbiased and inclusive vocabulary. It identifies words that are racially insensitive, assumptive or inappropriate to use in the context of talking about people with a disability and provides more acceptable alternatives. 
+Inclusify aims to encourage people to be more cognizant of their language and be more motivated to use unbiased and inclusive vocabulary. It identifies words that are racially insensitive, assumptive or inappropriate to use in the context of talking about people with a disability and provides more acceptable alternatives.
+Give it a try [here](inclusifyapp.herokuapp.com)
 
 ## How to use it
 1. Type or paste in your document.
