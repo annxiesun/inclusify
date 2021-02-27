@@ -26,6 +26,7 @@ class ChangedWord extends React.Component {
     this.setState({ menuOpen: false });
   }
 
+  // changes display of word and the raw value of the text in TextPage
   changeWord(e) {
     this.setState({ selected: e.target.value });
     this.props.replaceWord(
@@ -36,6 +37,7 @@ class ChangedWord extends React.Component {
 
   render() {
     let word;
+    
     if (this.state.selected == -1) {
       word = this.props.original_word;
     } else {

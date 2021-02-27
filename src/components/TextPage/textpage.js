@@ -29,38 +29,52 @@ $.fn.selectRange = function (start, end) {
     });
 };
 
+// Code explaination:
+//      1. to solve problem of div being uneditable, alters between two modes
+//
+//      2. to mimic the editable mode, when the user updates the editable mode, the state updates 
+//          & when the mode changes the the uneditable mode takes the value of the input box & mimics caret_pos
+// 
+//      3. Going to Uneditable Mode: splits the text into an array, then pushes the words into the array
+//      one by one using a <span> element so it's inline. If a bad word is detected, it pushes a 
+//      custom button component with a openable menu (ChangedWord) instead. 
+//
+
 class TextPage extends React.Component {
     constructor() {
         super();
 
-        this.updateInput = this.updateInput.bind(this)
+        // binding
+        this.updateInput = this.updateInput.bind(this);
         this.changeText = this.changeText.bind(this)
-
         this.toChanged = this.toChanged.bind(this)
         this.toEdit = this.toEdit.bind(this)
-
         this.onKeyDown = this.onKeyDown.bind(this)
-
         this.replaceWord = this.replaceWord.bind(this);
-
         this.setCaret = this.setCaret.bind(this)
-
         this.load = this.load.bind(this)
-
         this.isBadWord = this.isBadWord.bind(this);
+
+        // state of page, (change state = the page updates)
         this.state = {
-            input_text: "",
-            changed_text: [],
-            changed_raw:[],
-            mode: 0,
-            caret_pos: 0,
-            loading: false,
+            input_text: "", // input value of the editable <input/> component
+
+            changed_text: [], // what is shown in the uneditable but clickable component
+
+            changed_raw:[], // the raw text of the clickable component
+
+            mode: 0, // mode of page: 0 for editable, 1 for uneditable
+
+            caret_pos: 0, // position of the text caret 
+
+            loading: false, // show loading animation or not
             charCount:0,
             copied: 'Copy to clipboard.'
         }
 
     }
 
+    // when user inputs key, goes to editable mode
      onKeyDown(e) {
 
         if (this.state.mode == 1) {
@@ -69,9 +83,12 @@ class TextPage extends React.Component {
         }
     }
 
+    // sets the position of the caret
     setCaret(e) {
         this.setState({ caret_pos: e.target.selectionStart })
     }
+
+    // updates the value of the editable box
     updateInput = (e) => {
 
         this.setState(
@@ -86,6 +103,7 @@ class TextPage extends React.Component {
         )
 
 
+        // waits two seconds of no user input to start loading analysis
         var duration = 2000;
         clearTimeout(this.inputTimer);
         this.inputTimer = setTimeout(() => {
@@ -95,6 +113,7 @@ class TextPage extends React.Component {
         }, duration);
     }
 
+    // show loading animation
     load = (e) => {
         var duration = 2000;
         clearTimeout(this.inputTimer);
@@ -105,17 +124,20 @@ class TextPage extends React.Component {
         }, duration);
     }
 
+    // go to uneditable mode
     toChanged() {
         this.changeText()
         this.setState({ mode: 1 })
     }
 
+    // go to editable mode
     async toEdit() {
         await this.setState({ mode: 0 })
         setTimeout($('.text-area').selectRange(this.state.caret_pos))
 
     }
 
+    // replaces word when user selects new word, used in child element ChangedWord
     replaceWord(old_index, new_word) {
         let changed = this.state.changed_raw
         
@@ -127,6 +149,7 @@ class TextPage extends React.Component {
         this.setState({ changed_raw: changed, input_text: changed.join(""), charCount:changed.join("").length })
     }
 
+    // checks if word is in bad words lists
     isBadWord(word){
         for (var key in badwords) {
             if (key.toString()==word){
@@ -136,6 +159,8 @@ class TextPage extends React.Component {
         return false;
 
     }
+
+    // creates the non-editable component with the same text
     changeText() {
 
         let text = this.state.input_text;
@@ -192,6 +217,7 @@ class TextPage extends React.Component {
 
     render() {
         let text = [];
+        // detects mode
         if (this.state.mode == 0) {
             text.push(<textarea autoFocus data-gramm_editor="false" placeholder="Type your text here." tabIndex="0" id="text-area" onClick={this.setCaret} className="text-area" onChange={this.updateInput} value={this.state.input_text}
                 selectionEnd={this.state.caret_pos}
@@ -217,7 +243,9 @@ class TextPage extends React.Component {
 
                         </span>
                         <div class="text-container">
+                            
                             {text}
+
                             <button onClick={this.toChanged}className="inclusify-btn">Inclusify</button>
                         </div>
                         
